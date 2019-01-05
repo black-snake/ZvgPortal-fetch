@@ -1,4 +1,5 @@
-. ./ZvgPortalConstants.ps1
+# include constants
+. $(Join-Path -Path $PSScriptRoot -ChildPath ZvgPortalConstants.ps1)
 
 function Get-Zvgs {
     [CmdletBinding(DefaultParameterSetName = "Default")]
@@ -39,14 +40,13 @@ function Get-Zvgs {
     )
     
     begin {
-        $BaseUri = "https://www.zvg-portal.de"
-
         $StateAbbreviation = $States[$State]
 
+        $BaseUri = "https://www.zvg-portal.de"
         $ItemUriGeneric = "$BaseUri/index.php?button=showZvg&land_abk=$StateAbbreviation&zvg_id="
 
-        $ModificationDateRegEx = "(?i)\(letzte Aktualisierung (\d+-\d+-\d+ \d+:\d+)\)"
-        $ItemPathRegEx = "(?i)index\.php\?button=showZvg&zvg_id=(\d+)&land_abk=$StateAbbreviation"
+        $ModificationDateRegEx = "\(letzte Aktualisierung (\d+-\d+-\d+ \d+:\d+)\)"
+        $ItemPathRegEx = "index\.php\?button=showZvg&zvg_id=(\d+)&land_abk=$StateAbbreviation"
         $HtmlRegEx = "(?is)$ItemPathRegEx.*?$ModificationDateRegEx"
 
         $QueryUri = "$BaseUri/index.php?button=Suchen&all=1"
