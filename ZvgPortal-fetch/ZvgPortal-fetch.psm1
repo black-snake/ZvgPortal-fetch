@@ -4,7 +4,7 @@
 function Get-Zvgs {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param (
-        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid })]
+        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid } )]
         [string] $FilePath = "zvgs-fetched.json",
 
         [Parameter(Mandatory = $true)]
@@ -30,6 +30,9 @@ function Get-Zvgs {
 
         [ValidateScript( { $StateCountyCourts[$States[$State]].ContainsKey($_) } )]
         [string] $StateCountyCourt = [string]::Empty,
+
+        [ValidateScript( { Test-Path -Path $_ -PathType Leaf } )]
+        [string] $CustomNotificationScriptPath,
 
         [Parameter(Mandatory = $true, ParameterSetName = "Loop")]
         [switch] $Loop,
@@ -91,6 +94,7 @@ function Get-Zvgs {
                         @{
                             Id               = $_.Groups[1].Value
                             ModificationDate = [datetime]::Parse($_.Groups[2].Value, [System.Globalization.CultureInfo]::new("de-DE"), [System.Globalization.DateTimeStyles]::AssumeLocal)
+                            Uri              = "${ItemUriGeneric}$($_.Id)"
                         }
                     }
                 }
@@ -101,8 +105,14 @@ function Get-Zvgs {
             $ZvgsDiff = Get-ZvgsDiff -CurrentZvgs $CurrentZvgs -DetectedZvgs $DetectedZvgs
 
             if ($null -ne $ZvgsDiff) {
-                Write-Host "THERE ARE NEW ITEMS AVAILABLE:"
-                $ZvgsDiff | ForEach-Object { Write-Host "${ItemUriGeneric}$($_.Id)" }
+                Write-Host "THERE ARE NEW/ MODIFIED ITEMS:"
+                $ZvgsDiff | ForEach-Object { Write-Host $_.Uri }
+
+                # invoke custom notification script
+                if ($null -ne $CustomNotificationScriptPath) {
+                    $CustomNotificationScriptArgs = @{InputObject = $ZvgsDiff}
+                    & $CustomNotificationScriptPath @CustomNotificationScriptArgs
+                }
             }
 
             if ($Loop) {
@@ -132,7 +142,7 @@ function Get-ZvgsObj {
 function Set-ZvgsObj {
     param (
         [Parameter(Mandatory = $true)]
-        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid })]
+        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid } )]
         [string] $FilePath,
 
         [AllowNull()]
@@ -155,7 +165,7 @@ function Get-ZvgsDiff {
         [object] $DetectedZvgs
     )
 
-    $StillAvailableZvgs = @($DetectedZvgs | Where-Object { $_.Id -in $CurrentZvgs.Id })
+    $StillAvailableZvgs = @($DetectedZvgs | Where-Object { $_.Id -in $CurrentZvgs.Id } )
     $ModifiedZvgs = @(
         $StillAvailableZvgs | Where-Object {
             $NewData = $_
@@ -165,7 +175,7 @@ function Get-ZvgsDiff {
         }
     )
 
-    $NewZvgs = @($DetectedZvgs | Where-Object { $_.Id -notin $CurrentZvgs.Id })
+    $NewZvgs = @($DetectedZvgs | Where-Object { $_.Id -notin $CurrentZvgs.Id } )
 
     return $ModifiedZvgs + $NewZvgs
 }
