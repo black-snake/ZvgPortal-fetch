@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  zvgportal-fetch:
+    container_name: zvgportal-fetch
+    image: zvgportal-fetch:latest
+    environment:
+      - 'ZvgState=<STATE>'
+      - 'ZvgStateCountyCourt=-- Alle Amtsgerichte --'
+      - 'LoopIntervalSeconds=3600'
+      - 'FromMailAddr='
+      - 'ToMailAddr='
+      - 'SmtpServer='
+      - 'SmtpPort='
+      - 'SmtpSecure='
+      - 'SmtpUser='
+      - 'SmtpPassword='
+      - 'MailSubj='
+    volumes:
+      - data:/my-zvgs
+
+volumes:
+  data:
