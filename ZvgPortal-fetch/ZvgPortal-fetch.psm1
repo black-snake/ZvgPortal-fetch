@@ -26,7 +26,7 @@ function Get-Zvgs {
         [string] $State,
 
         [ValidateScript( { $StateCountyCourts[$States[$State]].ContainsKey($_) } )]
-        [string] $StateCountyCourt = [string]::Empty,
+        [string] $StateCountyCourt = "-- Alle Amtsgerichte --",
 
         [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid } )]
         [string] $FilePath = "zvgs-fetched.json",
@@ -54,7 +54,7 @@ function Get-Zvgs {
 
         $QueryUri = "$BaseUri/index.php?button=Suchen&all=1"
         $QueryObject = @{
-            ger_name = $State
+            ger_name = $StateCountyCourt
             order_by = 2
             land_abk = $StateAbbreviation
             ger_id   = $StateCountyCourts[$StateAbbreviation][$StateCountyCourt]
@@ -94,7 +94,7 @@ function Get-Zvgs {
                         @{
                             Id               = $_.Groups[1].Value
                             ModificationDate = [datetime]::Parse($_.Groups[2].Value, [System.Globalization.CultureInfo]::new("de-DE"), [System.Globalization.DateTimeStyles]::AssumeLocal)
-                            Uri              = "${ItemUriGeneric}$($_.Id)"
+                            Uri              = ${ItemUriGeneric} + $_.Groups[1].Value
                         }
                     }
                 }
