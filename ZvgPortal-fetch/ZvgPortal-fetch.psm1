@@ -4,9 +4,6 @@
 function Get-Zvgs {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param (
-        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid } )]
-        [string] $FilePath = "zvgs-fetched.json",
-
         [Parameter(Mandatory = $true)]
         [ValidateSet(
             "Baden-Württemberg",
@@ -30,6 +27,9 @@ function Get-Zvgs {
 
         [ValidateScript( { $StateCountyCourts[$States[$State]].ContainsKey($_) } )]
         [string] $StateCountyCourt = [string]::Empty,
+
+        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -IsValid } )]
+        [string] $FilePath = "zvgs-fetched.json",
 
         [ValidateScript( { Test-Path -Path $_ -PathType Leaf } )]
         [string] $CustomNotificationScriptPath,
@@ -109,7 +109,7 @@ function Get-Zvgs {
                 $ZvgsDiff | ForEach-Object { Write-Host $_.Uri }
 
                 # invoke custom notification script
-                if ($null -ne $CustomNotificationScriptPath) {
+                if ($PSBoundParameters.ContainsKey("CustomNotificationScriptPath")) {
                     $CustomNotificationScriptArgs = @{InputObject = $ZvgsDiff}
                     & $CustomNotificationScriptPath @CustomNotificationScriptArgs
                 }
