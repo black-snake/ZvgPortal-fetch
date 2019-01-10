@@ -5,17 +5,17 @@ services:
     container_name: zvgportal-fetch
     image: zvgportal-fetch:latest
     environment:
-      - 'ZvgState=<STATE>'
-      - 'ZvgStateCountyCourt=-- Alle Amtsgerichte --'
+      - 'ZvgState=Bayern'
+      - 'ZvgStateCountyCourt=München'
       - 'LoopIntervalSeconds=3600'
-      - 'FromMailAddr='
-      - 'ToMailAddr='
-      - 'SmtpServer='
-      - 'SmtpPort='
-      - 'SmtpSecure='
-      - 'SmtpUser='
-      - 'SmtpPassword='
-      - 'MailSubj='
+      - 'FromMailAddr=from-mail@example.com'
+      - 'ToMailAddr=to-mail@example.com'
+      - 'SmtpServer=smtp.example.com'
+      - 'SmtpPort=587'
+      - 'SmtpSecure=true'
+      - 'SmtpUser=smtp-user@example.com'
+      - 'SmtpPassword=smtp-password'
+      - 'MailSubj=ZvgPortal-fetch - REPORT'
     volumes:
       - data:/my-zvgs
 
