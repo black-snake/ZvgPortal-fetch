@@ -2,6 +2,39 @@
 . $(Join-Path -Path $PSScriptRoot -ChildPath ZvgPortalConstants.ps1)
 
 function Get-Zvgs {
+
+    <#
+.SYNOPSIS
+    A PowerShell function to fetch foreclosure auction information from zvg-portal.de
+.DESCRIPTION
+    This function fetches foreclosure auction information from zvg-portal.de which can run a subsequent custom notification script to handle any new/ updated entities. Optionally, the function can run in an endless loop to constantly check for changes.
+.PARAMETER State
+    The state for which foreclosure auction information shall be fetched.
+.PARAMETER StateCountyCourt
+    The state county court for which foreclosure auction information shall be fetched.
+.PARAMETER FilePath
+    The path to a JSON file containing the fetched information (used internally by the function).
+.PARAMETER CustomNotificationScriptPath
+    The path to a PowerShell script that shall be invoked when there are new/ updated information available. The script must accept an input object named "InputObject" of the following structure:
+    @{
+        Id               : [int]
+        ModificationDate : [datetime]
+        Uri              : [string]
+    }
+.PARAMETER Loop
+    A switch to let the function run in an endless loop.
+.PARAMETER IntervalSeconds
+    In case the function runs in an endless loop, this parameter sets the loop interval in seconds.
+.EXAMPLE
+    Get-Zvgs -State Bayern -StateCountyCourt München
+
+    This command lets the function run once.
+.EXAMPLE
+    Get-Zvgs -State Bayern -StateCountyCourt München -Loop
+
+    This command lets the function run in an endless loop.
+#>
+
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param (
         [Parameter(Mandatory = $true)]
