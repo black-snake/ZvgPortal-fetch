@@ -17,4 +17,4 @@ This is a PowerShell module to fetch foreclosure auction information from zvg-po
 ## Help
 After you imported the module (or if the module is within your PowerShell module path), you can use the following command to get help for the function `Get-Zvgs`:
 
-        help Get-Zvgs
+    help Get-Zvgs
