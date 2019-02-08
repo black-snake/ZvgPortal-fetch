@@ -18,6 +18,7 @@ services:
       - 'MailSubj=ZvgPortal-fetch - REPORT'
     volumes:
       - data:/my-zvgs
+    restart: always
 
 volumes:
   data:
