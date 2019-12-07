@@ -3,7 +3,7 @@ version: '2'
 services:
   zvgportal-fetch:
     container_name: zvgportal-fetch
-    image: zvgportal-fetch:latest
+    image: bsnake/zvgportal-fetch:latest
     environment:
       - 'ZvgState=Bayern'
       - 'ZvgStateCountyCourt=München'
@@ -22,3 +22,4 @@ services:
 
 volumes:
   data:
+    name: data
